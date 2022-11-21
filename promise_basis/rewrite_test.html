@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promise</title>
+    <script src="./rewrite_promise.js"></script>
+</head>
+<body>
+    <script>
+        // then方法
+        let thenResult = new Promise((resolve, reject) => {
+            setTimeout(()=>{
+                resolve('OK');
+            },1000)
+        });
+
+        let thenResultNext  = thenResult.then(value => {
+            console.log("thenResult",value);
+            return new Promise((resolve,reject)=>{
+                reject("错误")
+            })
+        }, reason=>{
+            console.warn(reason);
+        }) 
+        
+        console.log("thenResultNext*",thenResultNext)
+          
+        // resolve方法
+        let resolveOne = Promise.resolve(521);
+        let resolveTwo = Promise.resolve(new Promise((resolve, reject) => {
+            // resolve('OK');
+            reject('Error');
+        }));
+        console.log("resolveOne",resolveOne)
+        console.log("resolveTwo",resolveTwo)
+        // catch方法
+        resolveTwo.catch(reason => {
+            console.log("resolveTwo的错误原因",reason);
+        })
+
+        // reject方法
+        let rejectOne = Promise.reject(521);
+        let rejectTwo = Promise.reject('iloveyou');
+        let rejectThree = Promise.reject(new Promise((resolve, reject) => {
+            resolve('OK');
+        }));
+        
+        console.log("rejectOne",rejectOne)
+        console.log("rejectTwo",rejectTwo)
+        console.log("rejectThree",rejectThree)
+
+        // all方法
+        let allOne = new Promise((resolve, reject) => {
+            setTimeout(() => {
+                resolve('OK');
+            }, 1000)
+        })
+        let allTwo = Promise.resolve('Success');
+        let allThree = Promise.resolve('Oh Yeah');
+        let allFour = Promise.reject("error")
+
+        let allResultOne = Promise.all([allOne, allTwo, allThree]);
+        let allResultTwo = Promise.all([allOne, allTwo, allFour]);
+        console.log("allResultOne",allResultOne);
+        console.log("allResultTwo",allResultTwo)
+
+        // race方法
+        let raceResultOne = new Promise((resolve, reject) => {
+            setTimeout(() => {
+                resolve('OK');
+            }, 1000);
+        })
+        let raceResultTwo = Promise.resolve('Success');
+        let raceResultThree = Promise.resolve('Oh Yeah');
+
+        const raceResult = Promise.race([raceResultOne, raceResultTwo, raceResultThree]);
+        console.log("raceResult",raceResult);
+ 
+    </script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>基本使用</title>
+</head>
+<body>
+    <div>
+        <h2>Promise 初体验</h2>
+        <button id="btn">点击抽奖</button>
+    </div>
+    <script>
+        //生成随机数。Math.random返回一个随机数，范围是(m-1,n-m+1]。Math.ceil() 函数返回大于或等于一个给定数字的最小整数。
+        function rand(m,n){
+            return Math.ceil(Math.random() * (n-m+1)) + m-1;
+        }
+        //获取元素对象
+        const btn = document.querySelector('#btn');
+        //绑定点击事件
+        btn.addEventListener('click', function(){
+            debugger
+            /*Promise函数体中的异步函数依旧是在同步函数执行完后再执行。
+            new Promise()是同步函数，执行后生成promise类型的实例对象p，此时对象的状态为pending。
+            p.then()执行时就会先执行p中的异步函数，更改状态后再根据状态执行对应的参数函数。
+            */ 
+            const p = new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    let n = rand(1, 100);
+                    if(n <= 30){
+                        resolve(n); // 将 promise 对象的状态设置为 『成功』
+                    }else{
+                        reject(n); // 将 promise 对象的状态设置为 『失败』
+                    }
+                }, 1000);
+            });
+            console.log("1",p);
+            console.log("@@")
+            
+            //调用 then 方法
+            p.then((value) => {
+                alert('恭喜恭喜中奖， 您的中奖数字为 ' + value);
+                console.log("2",p);
+            }, (reason) => {
+                alert('再接再厉, 您的号码为 ' + reason);
+                console.log("3",p);
+            });
+
+        });
+
+    </script>
+</body>
+</html>

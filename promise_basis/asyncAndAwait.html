@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        /*async返回值的规则和then方法相同。
+        如果函数的返回值是非promise类型的数据，则async返回的是结果值为数据，状态值为成功的promise对象.
+        如果函数的返回值是promise类型的数据，则返回值的promise的结果值和状态值决定async返回的结果。
+        如果函数内报错，则async返回的是结果值为错误信息，状态值为失败的promsie对象。
+        */
+        //返回值为非promise数据    
+        async function normalData(){
+            return  123
+
+            //3、抛出异常
+            // throw "oh  no"  //[[PromiseState]]: "rejected"   [[PromiseResult]]: "oh  no"
+        }
+        // 返回值是promise数据
+        async function promiseData(){
+            return new Promise((resolve,reject)=>{
+                resolve("OK")   //[[PromiseState]]: "fulfilled"   [[PromiseResult]]: "OK"
+            })
+        } 
+        // 返回值是异常
+        async function throwData(){
+            throw "oh no!"
+        }
+
+
+        let normalDataResult = normalData()
+        let promiseDataResult = promiseData()
+        let throwDataResult = throwData()
+        console.log("normalDataResult",normalDataResult) //[[PromiseState]]: "fulfilled"  [[PromiseResult]]: 123
+        console.log("promiseDataResult",promiseDataResult) ////[[PromiseState]]: "fulfilled"   [[PromiseResult]]: "OK"
+        console.log("throwDataResult",throwDataResult)  //[[PromiseState]]: "rejected"   [[PromiseResult]]: "oh no"
+    
+    
+        /*async/await返回promsie对象的结果值。
+        如果await右边是promise对象，则如果promise实例对象的状态值是成功，则await的返回值是promise对象的结果值。
+            如果promise实例对象的状态值是失败，则会报错并展示错误的原因。
+        如果await右边是非promise数据对象，则await的返回值是数据。
+        */ 
+        //await右边是promis实例对象的情况    
+        async function promiseCondition(){
+            let result = new Promise((resolve,reject)=>{
+                resolve("success")
+            })
+            let promiseConditionResult = await result
+            console.log("promiseConditionResult",promiseConditionResult)  //success
+        }
+        // await右边是promise其他类型数据的情况
+        async function otherCondition(){
+            let otherConditionResult = await "It is number"
+            console.log("otherConditionResult",otherConditionResult)  //It is number
+        }
+        async function promiseFalseCondition(){
+            let result = new Promise((resolve,reject)=>{
+                reject("error")
+            })
+            try{
+                debugger
+                let promiseFalseConditionResult = await result
+            }catch(e){
+                console.log("promiseFalseConditionResult",e)  //error
+            }
+        }
+
+        promiseCondition()  
+        otherCondition()
+        promiseFalseCondition()
+    
+    </script>
+</body>
+</html>
